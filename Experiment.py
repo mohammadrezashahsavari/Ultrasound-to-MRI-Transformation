@@ -34,8 +34,8 @@ save_image_freq = 2
 random_seed = 0
 
 # train validation test split. train_ratio will automaticlly be set to 1 - (val_ratio + test_ratio)
-val_ratio = 0.33
-test_ratio = 0.33
+val_ratio = 0.1
+test_ratio = 0.15
 
 # number of subjects you want to load. in the case of facing memory limit errors you can reduce the number of subject data that will be loaded using this parameter. if you wat to load all the data set this parameter to -1.
 use_n_subjects = -1
