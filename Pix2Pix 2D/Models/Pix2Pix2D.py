@@ -185,24 +185,28 @@ class Pix2Pix():
 
 
   def fit(self, train_data, test_data):
-    example_us, example_mri = next(iter(train_data))
+    example_us, example_mri = next(iter(test_data))
     example_input = np.expand_dims(example_us, axis=0)
     example_target = np.expand_dims(example_mri, axis=0)
     max_epochs = self.args['max_epochs']
     start = time.time()
     for epoch in range(max_epochs):
       for step, (input_image, target) in tqdm(enumerate(train_data.batch(self.args['batch_size']))):
+        
+        step = tf.convert_to_tensor(step, dtype=tf.int64)
+          
         gen_total_loss, gen_gan_loss, gen_l1_loss, disc_loss = self.train_step(input_image, target, step)
 
         # save a sample generated image
-        if step % self.args['save_image_freq'] == 0:
+        if int(step) % self.args['save_image_freq'] == 0:
           sample_generated_image_path = os.path.join(self.args['sample_generated_images_dir'], f'SampleGenerated_epoch{epoch+1}_step{step}')
           generate_images(self.generator, example_input, example_target, sample_generated_image_path)
 
         # saved models
-        if step % self.args['save_weights_freq'] == 0:
+        if int(step) % self.args['save_weights_freq'] == 0:
           self.generator.save_weights(os.path.join(self.args['last_models_dir'], 'Generator.h5'))
           self.discriminator.save_weights(os.path.join(self.args['last_models_dir'], 'Discriminator.h5'))
+        
       
       #display.clear_output(wait=True)
 
@@ -229,6 +233,7 @@ def generate_images(model, test_input, tar, save_to):
     plt.imshow(display_list[i] * 0.5 + 0.5)
     plt.axis('off')
   plt.savefig(save_to)
+  plt.close()
 
 
 
