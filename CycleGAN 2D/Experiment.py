@@ -37,7 +37,7 @@ test_ratio = 0.15
 
 # This parameter determines whether you want to train your model or generate outputs using a pre-trained model.
 # It has to be set either on 'train', 'generate_outputs_2D' or 'generate_outputs_3D'.
-mode = 'generate_outputs_3D'
+mode = 'train'
 
 # =====================================================================================================
 # =====================================================================================================

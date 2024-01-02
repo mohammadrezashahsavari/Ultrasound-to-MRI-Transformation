@@ -11,6 +11,7 @@ from pathlib import Path
 from Tools.callbacks import GANMonitor
 import matplotlib.pyplot as plt
 from tensorflow import keras
+import nibabel as nib
 
 
 class Experiment_transformation():
@@ -105,7 +106,7 @@ class Experiment_transformation():
             disc_loss_fn=discriminator_loss_fn,
         )
         # Callbacks
-        plotter = GANMonitor()
+        plotter = GANMonitor(self.test_dataset, self.args['sample_generated_images_dir'])
         checkpoint_filepath = "{self.args.last_models_dir}.{epoch:03d}"
         model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
             filepath=checkpoint_filepath, save_weights_only=True
@@ -115,7 +116,7 @@ class Experiment_transformation():
             self.model.fit(
                 self.train_dataset.batch(self.args['batch_size']),
                 epochs=self.args['max_epochs'],
-                callbacks=[plotter, model_checkpoint_callback],
+                callbacks=[plotter]#, model_checkpoint_callback],
             )
         except KeyboardInterrupt:
             pass
@@ -131,7 +132,7 @@ class Experiment_transformation():
                 Path(result_dir_path).mkdir(parents=True, exist_ok=True)
 
         print('Loading model weights from: ' + self.args['last_models_dir'])
-        self.model.generator.load_weights(os.path.join(self.args['last_models_dir'], 'Generator_G.h5'))
+        self.model.gen_G.load_weights(os.path.join(self.args['last_models_dir'], 'Generator_G.h5'))
 
         print('Generating outputs ...')
         for set_name in ['train', 'val', 'test']:
@@ -154,7 +155,7 @@ class Experiment_transformation():
                 US = US.numpy()
                 gt_MRI = gt_MRI.numpy()
 
-                pred_MRI = self.model.generator(np.expand_dims(US, axis=0)).numpy()
+                pred_MRI = self.model.gen_G(np.expand_dims(US, axis=0)).numpy()
                 pred_MRI = np.squeeze(pred_MRI, axis=0)
 
                 pred_MRI_path = os.path.join(generated_images_path, file_name+ '.png')
@@ -190,7 +191,7 @@ class Experiment_transformation():
                 Path(result_dir_path).mkdir(parents=True, exist_ok=True)
 
         print('[INFO] Loading model weights from: ' + self.args['last_models_dir'])
-        self.model.generator.load_weights(os.path.join(self.args['last_models_dir'], 'Generator_G.h5'))
+        self.model.gen_G.load_weights(os.path.join(self.args['last_models_dir'], 'Generator_G.h5'))
 
         images_metadata = utils.get_volume_metadata(os.path.join(self.preprocessed_dataset_path, '..', 'MRI_Images'))
 
@@ -229,7 +230,7 @@ class Experiment_transformation():
                     data = np.load(slice_path, allow_pickle=True) 
                     US, gt_MRI =  data['us'], data['mri']
 
-                    pred_MRI = self.model.generator(np.expand_dims(US, axis=0)).numpy()
+                    pred_MRI = self.model.gen_G(np.expand_dims(US, axis=0)).numpy()
                     pred_MRI = np.squeeze(pred_MRI)
                     gt_MRI = np.squeeze(gt_MRI)
 
