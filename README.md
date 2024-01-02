@@ -1,8 +1,9 @@
 # Transformation of Ultrasound Images to MR Images Using Generative Adversarial Networks
 
 
+![Training_First_100_Epochs](https://github.com/mohammadrezashahsavari/Ultrasound-to-MRI-Transformation/assets/76266892/b4058cd6-e855-4d96-862d-7da579cbe88b)
 
-https://github.com/mohammadrezashahsavari/Ultrasound-to-MRI-Transformation/assets/76266892/a901a2e0-ca74-47ef-a814-78058838306b
+
 
 
 
